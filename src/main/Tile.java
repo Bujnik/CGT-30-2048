@@ -11,6 +11,9 @@ public class Tile {
     public Tile() {
         this.value = 0;
     }
+    public void setValue(int value) {
+        this.value = value;
+    }
     public boolean isEmpty(){
         return value == 0;
     }
@@ -48,6 +51,4 @@ public class Tile {
                 return new Color(0xff0000);
         }
     }
-
-
 }
