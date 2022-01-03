@@ -1,52 +1,29 @@
 package main;
 
+import main.Tile;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Model {
-    private static final int FIELD_WIDTH = 4;
-    private Tile[][] gameTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];
-    public int score = 0;
-    public int maxTile = 0;
+public class Test {
+    static int score = 0;
+    static int maxTile = 0;
+    public static void main(String[] args) {
+        int a = 0;
+        int b = 0;
+        int c = 2;
+        int d = 16;
+        Tile[] tiles = new Tile[]{new Tile(a),new Tile(b), new Tile(c),new Tile(d)};
+        consolidateTiles(tiles);
+        System.out.println(score);
+        System.out.println(maxTile);
+        System.out.println(Arrays.toString(tiles));
 
-    public Model(){
-        resetGameTiles();
-    }
-
-    public void resetGameTiles(){
-        //Game Start: Reset board to empty state and add 2 random tiles
-        for (int i = 0; i < FIELD_WIDTH; i++) {
-            for (int j = 0; j < FIELD_WIDTH; j++) {
-                gameTiles[i][j] = new Tile();
-            }
-        }
-        addTile();
-        addTile();
-    }
-
-    private void addTile(){
-        List<Tile> tiles = getEmptyTiles();
-        //We choose random empty tile to spawn new one
-        if (!tiles.isEmpty())
-        {
-            int chosenIndex = (int)(Math.random() * (tiles.size()));
-            //We have 10% chance of spawning tile with value of 4.
-            tiles.get(chosenIndex).setValue(Math.random() < 0.9 ? 2 : 4);
-        }
 
     }
 
-    private List<Tile> getEmptyTiles(){
-        List<Tile> tiles = new ArrayList<>();
-        for (int i = 0; i < FIELD_WIDTH; i++){
-            for (int j = 0; j < FIELD_WIDTH; j++) {
-                if (gameTiles[i][j].isEmpty()) tiles.add(gameTiles[i][j]);
-            }
-        }
-        return tiles;
-    }
-
-    private void consolidateTiles(Tile[] tiles) {
+    private static void consolidateTiles(Tile[] tiles) {
         List<Integer> temp = new ArrayList<>();
         for (Tile tile : tiles) {
             //we iterate through tiles, if tile is not empty, we add its value to temporary list
@@ -57,9 +34,11 @@ public class Model {
         //Replacing values in array with values from temp list, remaining places will be set to 0
         for (int i = 0; i < temp.size(); i++) tiles[i].setValue(temp.get(i));
         for (int i = temp.size(); i < tiles.length; i++) tiles[i].setValue(0);
+
+        mergeTiles(tiles);
     }
 
-    private void mergeTiles(Tile[] tiles) {
+    private static void mergeTiles(Tile[] tiles) {
         for (int i = 0; i < tiles.length - 1; i++){
             if(tiles[i].value == tiles[i + 1].value && !tiles[i].isEmpty()){
                 //if we have not empty tile with same value as neighbouring one,
@@ -79,6 +58,7 @@ public class Model {
                     tiles[j].setValue(tiles[j + 1].value);
                     tiles[j + 1].setValue(0);
                 }
+
             }
         }
     }
