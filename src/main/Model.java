@@ -46,7 +46,14 @@ public class Model {
         return tiles;
     }
 
-    private void consolidateTiles(Tile[] tiles) {
+    private boolean consolidateTiles(Tile[] tiles) {
+        //In order to check if changes were made to the array, we create deep copy of tiles array - inserting new Tile objects with the same value
+        Tile[] tempCheck = new Tile[tiles.length];
+        int k = 0;
+        for (Tile tile : tiles) {
+            tempCheck[k] = new Tile(tile.value);
+            k++;
+        }
         List<Integer> temp = new ArrayList<>();
         for (Tile tile : tiles) {
             //we iterate through tiles, if tile is not empty, we add its value to temporary list
@@ -54,12 +61,21 @@ public class Model {
                 temp.add(tile.value);
             }
         }
+
         //Replacing values in array with values from temp list, remaining places will be set to 0
         for (int i = 0; i < temp.size(); i++) tiles[i].setValue(temp.get(i));
         for (int i = temp.size(); i < tiles.length; i++) tiles[i].setValue(0);
+
+        //if value of a tile is not matching value from tempCheck array, we return true, as we changed the array
+        for (int i = 0; i < tempCheck.length; i++) {
+            if (tempCheck[i].value != tiles[i].value) return true;
+        }
+        return false;
     }
 
-    private void mergeTiles(Tile[] tiles) {
+    private boolean mergeTiles(Tile[] tiles) {
+        //If merge operation is performed, flag isChanged is set to true
+        boolean isChanged = false;
         for (int i = 0; i < tiles.length - 1; i++){
             if(tiles[i].value == tiles[i + 1].value && !tiles[i].isEmpty()){
                 //if we have not empty tile with same value as neighbouring one,
@@ -71,6 +87,7 @@ public class Model {
                 int points = tiles[i].value * 2;
                 tiles[i].setValue(points);
                 tiles[i + 1].setValue(0);
+                isChanged = true;
                 score += points;
                 //Update max value if needed
                 maxTile = Math.max(maxTile, tiles[i].value);
@@ -81,5 +98,17 @@ public class Model {
                 }
             }
         }
+        return isChanged;
+    }
+
+    public void left(){
+        boolean isChanged = false;
+
+        for (int i = 0; i < gameTiles.length; i++) {
+            isChanged |= consolidateTiles(gameTiles[i]);
+            isChanged |= mergeTiles(gameTiles[i]);
+        }
+
+        if (isChanged) addTile();
     }
 }

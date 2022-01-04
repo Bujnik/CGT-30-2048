@@ -5,6 +5,11 @@ import java.awt.*;
 public class Tile {
     int value;
 
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+
     public Tile(int value) {
         this.value = value;
     }
