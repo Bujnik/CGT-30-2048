@@ -12,28 +12,14 @@ public class Test {
     static int maxTile = 0;
     static int FIELD_WIDTH = 4;
     static Tile[][] gameTiles ={
-            {new Tile(16),new Tile(0), new Tile(0),new Tile(0)},
-            {new Tile(16),new Tile(0), new Tile(0),new Tile(0)},
-            {new Tile(16),new Tile(0), new Tile(0),new Tile(0)},
-            {new Tile(16),new Tile(0), new Tile(0),new Tile(0)}
+            {new Tile(1),new Tile(2), new Tile(3),new Tile(4)},
+            {new Tile(5),new Tile(6), new Tile(7),new Tile(8)},
+            {new Tile(9),new Tile(11), new Tile(12),new Tile(13)},
+            {new Tile(16),new Tile(14), new Tile(15),new Tile(10)}
     };
 
     public static void main(String[] args) {
-        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
-        System.out.println();
-        up();
-        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
-        System.out.println();
-        right();
-        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
-        System.out.println();
-        down();
-        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
-        System.out.println();
-        left();
-        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
-
-
+        System.out.println(canMove());
     }
 
     private static void addTile(){
@@ -159,6 +145,17 @@ public class Test {
         gameTiles = temp.clone();
     }
 
+    private static Tile[][] rotateCW(Tile[][] board){
+        //This method will help us rotate our matrix.
+        //In order to rotate 90 degrees clockwise, we need to populate element at coordinates [i][j]
+        //with element[size - j - 1][i]. We'll do that through temp matrix and clone it into gameTiles afterwards
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = board[FIELD_WIDTH - j - 1][i];
+        }
+        return temp.clone();
+    }
+
     private static void rotateCounterCW(){
         //This method will help us rotate our matrix.
         //In order to rotate 90 degrees counter-clockwise, we need to populate element at coordinates [i][j]
@@ -168,5 +165,24 @@ public class Test {
             for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = gameTiles[j][FIELD_WIDTH - i - 1];
         }
         gameTiles = temp.clone();
+    }
+
+    private static boolean canMove(){
+        //Create deep copy of gameTiles
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(gameTiles[i][j].value);
+        }
+        //Let's check if we can consolidate or merge tiles on all directions,
+        //Perform this operation 4 times, logic will be as in processMove() method
+        //Once flag isChanged is set to true, we will return that value
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < temp.length; i++) {
+                if(consolidateTiles(temp[i])) return true;
+                if(mergeTiles(temp[i])) return true;
+            }
+            temp = rotateCW(temp);
+        }
+        return false;
     }
 }

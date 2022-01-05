@@ -9,6 +9,10 @@ public class Model {
     public int score = 0;
     public int maxTile = 0;
 
+    public Tile[][] getGameTiles() {
+        return gameTiles;
+    }
+
     public Model(){
         resetGameTiles();
     }
@@ -146,6 +150,16 @@ public class Model {
         }
         gameTiles = temp.clone();
     }
+    private Tile[][] rotateCW(Tile[][] board){
+        //This method will help us rotate our matrix.
+        //In order to rotate 90 degrees clockwise, we need to populate element at coordinates [i][j]
+        //with element[size - j - 1][i]. We'll do that through temp matrix and clone it into gameTiles afterwards
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = board[FIELD_WIDTH - j - 1][i];
+        }
+        return temp.clone();
+    }
 
     private void rotateCounterCW(){
         //This method will help us rotate our matrix.
@@ -156,5 +170,25 @@ public class Model {
             for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = gameTiles[j][FIELD_WIDTH - i - 1];
         }
         gameTiles = temp.clone();
+    }
+
+    public boolean canMove(){
+        //Create deep copy of gameTiles
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(gameTiles[i][j].value);
+        }
+        //Let's check if we can consolidate or merge tiles on all directions,
+        //Perform this operation 4 times, logic will be as in processMove() method
+        //After each operation we will rotate the board clockwise
+        //Once result of consolidate/merge is true, we will return that value
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < temp.length; i++) {
+                if(consolidateTiles(temp[i])) return true;
+                if(mergeTiles(temp[i])) return true;
+            }
+            temp = rotateCW(temp);
+        }
+        return false;
     }
 }
