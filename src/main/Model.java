@@ -2,12 +2,17 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Model {
     private static final int FIELD_WIDTH = 4;
     private Tile[][] gameTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];
     public int score = 0;
     public int maxTile = 0;
+
+    private Stack<Tile[][]> previousStates = new Stack<>();
+    private Stack<Integer> previousScores = new Stack<>();
+    private boolean isSaveNeeded = true;
 
     public Tile[][] getGameTiles() {
         return gameTiles;
@@ -173,22 +178,42 @@ public class Model {
     }
 
     public boolean canMove(){
-        //Create deep copy of gameTiles
-        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
-        for (int i = 0; i < FIELD_WIDTH; i++){
-            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(gameTiles[i][j].value);
-        }
+        Tile[][] temp = copyBoard(gameTiles);
         //Let's check if we can consolidate or merge tiles on all directions,
         //Perform this operation 4 times, logic will be as in processMove() method
         //After each operation we will rotate the board clockwise
         //Once result of consolidate/merge is true, we will return that value
         for (int j = 0; j < 4; j++) {
-            for (int i = 0; i < temp.length; i++) {
-                if(consolidateTiles(temp[i])) return true;
-                if(mergeTiles(temp[i])) return true;
+            for (Tile[] tiles : temp) {
+                if (consolidateTiles(tiles)) return true;
+                if (mergeTiles(tiles)) return true;
             }
             temp = rotateCW(temp);
         }
         return false;
+    }
+
+    private void saveState(Tile[][] board) {
+        Tile[][] temp = copyBoard(board);
+        previousStates.push(temp);
+        previousScores.push(score);
+        isSaveNeeded = false;
+    }
+
+    private Tile[][] copyBoard(Tile[][] board) {
+        //Create deep copy of passed board
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(board[i][j].value);
+        }
+        return temp;
+    }
+
+    public void rollback(){
+        boolean canChange = !previousScores.isEmpty() && !previousStates.isEmpty();
+        if (canChange) {
+            score = previousScores.pop();
+            gameTiles = previousStates.pop();
+        }
     }
 }

@@ -2,10 +2,7 @@ package main;
 
 import main.Tile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Test {
     static int score = 0;
@@ -15,11 +12,23 @@ public class Test {
             {new Tile(1),new Tile(2), new Tile(3),new Tile(4)},
             {new Tile(5),new Tile(6), new Tile(7),new Tile(8)},
             {new Tile(9),new Tile(11), new Tile(12),new Tile(13)},
-            {new Tile(16),new Tile(14), new Tile(15),new Tile(10)}
+            {new Tile(16),new Tile(16), new Tile(15),new Tile(10)}
     };
+    private static Stack<Tile[][]> previousStates = new Stack<>();
+    private static Stack<Integer> previousScores = new Stack<>();
+    private static boolean isSaveNeeded = true;
 
     public static void main(String[] args) {
-        System.out.println(canMove());
+        saveState(gameTiles);
+        left();
+        System.out.println(score);
+        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
+        System.out.println();
+        rollback();
+        System.out.println(score);
+        for (Tile[] tiles : gameTiles) System.out.println(Arrays.toString(tiles));
+        System.out.println();
+
     }
 
     private static void addTile(){
@@ -168,11 +177,7 @@ public class Test {
     }
 
     private static boolean canMove(){
-        //Create deep copy of gameTiles
-        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
-        for (int i = 0; i < FIELD_WIDTH; i++){
-            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(gameTiles[i][j].value);
-        }
+        Tile[][] temp = copyBoard(gameTiles);
         //Let's check if we can consolidate or merge tiles on all directions,
         //Perform this operation 4 times, logic will be as in processMove() method
         //Once flag isChanged is set to true, we will return that value
@@ -184,5 +189,25 @@ public class Test {
             temp = rotateCW(temp);
         }
         return false;
+    }
+    private static void saveState(Tile[][] board) {
+        Tile[][] temp = copyBoard(board);
+        previousStates.add(temp);
+        previousScores.add(score);
+        isSaveNeeded = false;
+    }
+
+    private static Tile[][] copyBoard(Tile[][] board) {
+        //Create deep copy of passed board
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = new Tile(board[i][j].value);
+        }
+        return temp;
+    }
+
+    public static void rollback(){
+        if (!previousScores.isEmpty()) score = previousScores.pop();
+        if (!previousStates.isEmpty()) gameTiles = previousStates.pop();
     }
 }
