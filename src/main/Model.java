@@ -224,4 +224,21 @@ public class Model {
             gameTiles = previousStates.pop();
         }
     }
+    public void randomMove(){
+        int n = (int)(Math.random()*4) + 1;
+        switch (n){
+            case 1:
+                left();
+                break;
+            case 2:
+                right();
+                break;
+            case 3:
+                up();
+                break;
+            case 4:
+                down();
+                break;
+        }
+    }
 }
