@@ -241,4 +241,24 @@ public class Model {
                 break;
         }
     }
+    public boolean hasBoardChanged(){
+        Tile[][] backup = previousStates.peek();
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++){
+                if (backup[i][j].value != gameTiles[i][j].value) return true;
+            }
+        }
+        return false;
+    }
+    public MoveFitness getMoveFitness(Move move){
+        move.move();
+        int emptyTiles = -1;
+        int sc = 0;
+        if (hasBoardChanged()){
+            emptyTiles = getEmptyTiles().size();
+            sc = score;
+            rollback();
+        }
+        return new MoveFitness(emptyTiles,sc,move);
+    }
 }
