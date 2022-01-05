@@ -1,8 +1,6 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Model {
     private static final int FIELD_WIDTH = 4;
@@ -260,5 +258,15 @@ public class Model {
             rollback();
         }
         return new MoveFitness(emptyTiles,sc,move);
+    }
+    public void autoMove(){
+        PriorityQueue<MoveFitness> moveQueue = new PriorityQueue<>(4, Collections.reverseOrder());
+        moveQueue.add(getMoveFitness(this::left));
+        moveQueue.add(getMoveFitness(this::right));
+        moveQueue.add(getMoveFitness(this::up));
+        moveQueue.add(getMoveFitness(this::down));
+        if (moveQueue.peek() != null) {
+            moveQueue.peek().getMove().move();
+        }
     }
 }
