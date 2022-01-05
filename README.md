@@ -10,7 +10,7 @@
  4. Auto move option (based on simple algorithm to find best move)
 
 __________________________________________________________
-Task completed. My takeaways:
+Task completed. My takeaways: <br>
 -> Practice with data structures (2d arrays, Stack) <br>
 -> More practice with MVC pattern <br>
 -> Practical use of Functional interface and method referencing <br>
