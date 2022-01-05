@@ -11,8 +11,8 @@
 
 __________________________________________________________
 Task completed. My takeaways:
--> Practice with data structures (2d arrays, Stack)
--> More practice with MVC pattern
--> Practical use of Functional interface and method referencing
--> Getting familiar with reading KeyEvents and connecting appropriate model methods to these
+-> Practice with data structures (2d arrays, Stack) <br>
+-> More practice with MVC pattern <br>
+-> Practical use of Functional interface and method referencing <br>
+-> Getting familiar with reading KeyEvents and connecting appropriate model methods to these <br>
 -> A lot of practice with commenting code - there were several complex methods that would be difficult to understand for someone not familiar with the code
