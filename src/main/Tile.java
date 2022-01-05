@@ -5,6 +5,7 @@ import java.awt.*;
 public class Tile {
     int value;
 
+    //For testing purposes
     @Override
     public String toString() {
         return String.valueOf(value);
