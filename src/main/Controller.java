@@ -8,6 +8,10 @@ public class Controller extends KeyAdapter {
     private View view;
     private static final int WINNING_TILE = 2048;
 
+    public View getView() {
+        return view;
+    }
+
     public Controller(Model model) {
         this.model = model;
         this.view = new View(this);
