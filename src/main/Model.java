@@ -102,13 +102,59 @@ public class Model {
     }
 
     public void left(){
+        //It's default setting, no rotation is necessary
+        processMove();
+    }
+    public void up(){
+        //If we rotate counterclockwise, and then consolidate to the left, we got movement upwards
+        rotateCounterCW();
+        processMove();
+        //We need to return to initial state
+        rotateCW();
+    }
+    public void right(){
+        //In order to get right movement, we have to flip board by 180 degrees, and then again to return to initial state
+        rotateCW();
+        rotateCW();
+        processMove();
+        rotateCW();
+        rotateCW();
+    }
+    public void down(){
+        //We need to rotate CW and then CCW afterwards to process this move correctly
+        rotateCW();
+        processMove();
+        rotateCounterCW();
+    }
+    private void processMove() {
+        //If consolidate/merge methods change game state, we add new random tile
         boolean isChanged = false;
-
         for (int i = 0; i < gameTiles.length; i++) {
             isChanged |= consolidateTiles(gameTiles[i]);
             isChanged |= mergeTiles(gameTiles[i]);
         }
-
         if (isChanged) addTile();
+    }
+
+    private void rotateCW(){
+        //This method will help us rotate our matrix.
+        //In order to rotate 90 degrees clockwise, we need to populate element at coordinates [i][j]
+        //with element[size - j - 1][i]. We'll do that through temp matrix and clone it into gameTiles afterwards
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = gameTiles[FIELD_WIDTH - j - 1][i];
+        }
+        gameTiles = temp.clone();
+    }
+
+    private void rotateCounterCW(){
+        //This method will help us rotate our matrix.
+        //In order to rotate 90 degrees counter-clockwise, we need to populate element at coordinates [i][j]
+        //with element[j][size - i - 1]. We'll do that through temp matrix and clone it into gameTiles afterwards
+        Tile[][] temp = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++){
+            for (int j = 0; j < FIELD_WIDTH; j++) temp[i][j] = gameTiles[j][FIELD_WIDTH - i - 1];
+        }
+        gameTiles = temp.clone();
     }
 }
