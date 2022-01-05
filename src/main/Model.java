@@ -111,29 +111,37 @@ public class Model {
     }
 
     public void left(){
+        if (isSaveNeeded) saveState(gameTiles);
         //It's default setting, no rotation is necessary
         processMove();
+        isSaveNeeded = true;
     }
     public void up(){
+        if (isSaveNeeded) saveState(gameTiles);
         //If we rotate counterclockwise, and then consolidate to the left, we got movement upwards
         rotateCounterCW();
         processMove();
         //We need to return to initial state
         rotateCW();
+        isSaveNeeded = true;
     }
     public void right(){
+        if (isSaveNeeded) saveState(gameTiles);
         //In order to get right movement, we have to flip board by 180 degrees, and then again to return to initial state
         rotateCW();
         rotateCW();
         processMove();
         rotateCW();
         rotateCW();
+        isSaveNeeded = true;
     }
     public void down(){
+        if (isSaveNeeded) saveState(gameTiles);
         //We need to rotate CW and then CCW afterwards to process this move correctly
         rotateCW();
         processMove();
         rotateCounterCW();
+        isSaveNeeded = true;
     }
     private void processMove() {
         //If consolidate/merge methods change game state, we add new random tile
